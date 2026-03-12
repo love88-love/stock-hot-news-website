@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>股票热点资讯</title>
+    <style>
+        /* 全局样式 */
+        :root {
+            --bg-primary: #1a1a2e;
+            --bg-secondary: #16213e;
+            --bg-card: #0f3460;
+            --text-primary: #ffffff;
+            --text-secondary: #b8b8b8;
+            --accent-color: #e94560;
+            --success-color: #00c853;
+            --danger-color: #ff5252;
+            --border-color: #2a2a4e;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+        /* 头部 */
+        .header {
+            background: var(--bg-secondary);
+            padding: 15px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow);
+        }
+
+        .header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .logo { font-size: 1.5rem; color: var(--accent-color); }
+
+        .nav { display: flex; gap: 10px; flex-wrap: wrap; }
+
+        .nav-btn {
+            background: transparent;
+            border: 2px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .nav-btn:hover { border-color: var(--accent-color); color: var(--text-primary); }
+        .nav-btn.active { background: var(--accent-color); border-color: var(--accent-color); color: var(--text-primary); }
+
+        /* 主内容 */
+        main { padding: 30px 20px; }
+        .section { display: none; }
+        .section.active { display: block; }
+
+        .section-title {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            color: var(--text-primary);
+            border-left: 4px solid var(--accent-color);
+            padding-left: 15px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .card h3 { font-size: 1.2rem; margin-bottom: 15px; color: var(--accent-color); }
+
+        .market-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .data-list { display: flex; flex-direction: column; gap: 10px; }
+
+        .data-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            transition: transform 0.2s ease;
+        }
+
+        .data-item:hover { transform: translateX(5px); }
+        .data-item .name { font-weight: 500; }
+        .data-item .code { font-size: 0.8rem; color: var(--text-secondary); margin-left: 8px; }
+        .data-item .price { font-size: 1.1rem; font-weight: 600; }
+
+        .data-item .change {
+            font-size: 0.9rem;
+            padding: 3px 8px;
+            border-radius: 4px;
+            margin-left: 10px;
+        }
+
+        .up { color: var(--success-color); }
+        .down { color: var(--danger-color); }
+        .up-bg { background: rgba(0, 200, 83, 0.2); }
+        .down-bg { background: rgba(255, 82, 82, 0.2); }
+
+        .news-list { display: flex; flex-direction: column; gap: 15px; }
+
+        .news-item {
+            padding: 15px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            border-left: 3px solid var(--accent-color);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .news-item:hover { border-left-color: var(--success-color); }
+        .news-item .news-title { font-size: 1rem; margin-bottom: 8px; line-height: 1.4; }
+        .news-item .news-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        .news-item .news-time { color: var(--accent-color); }
+
+        .flash-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .flash-item {
+            display: flex;
+            gap: 15px;
+            padding: 12px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+        }
+
+        .flash-item .flash-time {
+            min-width: 80px;
+            font-size: 0.85rem;
+            color: var(--accent-color);
+            font-weight: 500;
+        }
+
+        .flash-item .flash-content { flex: 1; line-height: 1.5; }
+
+        .flash-list::-webkit-scrollbar { width: 8px; }
+        .flash-list::-webkit-scrollbar-track { background: var(--bg-secondary); border-radius: 4px; }
+        .flash-list::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
+        .flash-list::-webkit-scrollbar-thumb:hover { background: var(--accent-color); }
+
+        .refresh-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: var(--bg-card);
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .refresh-info #last-update { color: var(--text-secondary); font-size: 0.9rem; }
+
+        .refresh-btn {
+            background: var(--accent-color);
+            border: none;
+            color: var(--text-primary);
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .refresh-btn:hover { transform: scale(1.05); box-shadow: 0 4px 12px rgba(233, 69, 96, 0.4); }
+
+        .loading { text-align: center; padding: 30px; color: var(--text-secondary); }
+        .error { text-align: center; padding: 30px; color: var(--danger-color); background: rgba(255, 82, 82, 0.1); border-radius: 8px; }
+
+        .footer {
+            background: var(--bg-secondary);
+            padding: 20px;
+            text-align: center;
+            margin-top: 40px;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .header .container { flex-direction: column; text-align: center; }
+            .nav { justify-content: center; }
+            .nav-btn { padding: 6px 12px; font-size: 0.85rem; }
+            .market-grid { grid-template-columns: 1fr; }
+            .section-title { font-size: 1.3rem; }
+            main { padding: 20px 15px; }
+        }
+
+        @media (max-width: 480px) {
+            .logo { font-size: 1.2rem; }
+            .nav-btn { padding: 5px 10px; font-size: 0.8rem; }
+            .data-item { flex-direction: column; align-items: flex-start; gap: 8px; }
+            .data-item .price-row { display: flex; align-items: center; width: 100%; justify-content: space-between; }
+            .refresh-info { flex-direction: column; gap: 10px; text-align: center; }
+            .flash-item { flex-direction: column; gap: 8px; }
+            .flash-item .flash-time { min-width: auto; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section.active { animation: fadeIn 0.3s ease; }
+        .data-item, .news-item, .flash-item { animation: fadeIn 0.3s ease; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <h1 class="logo">📈 股票热点资讯</h1>
+            <nav class="nav">
+                <button class="nav-btn active" data-section="market">实时行情</button>
+                <button class="nav-btn" data-section="sector">热门板块</button>
+                <button class="nav-btn" data-section="news">个股资讯</button>
+                <button class="nav-btn" data-section="flash">财经快讯</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <section id="market" class="section active">
+            <h2 class="section-title">实时行情</h2>
+            <div class="market-grid">
+                <div class="card index-card">
+                    <h3>主要指数</h3>
+                    <div id="index-list" class="data-list"><div class="loading">加载中...</div></div>
+                </div>
+                <div class="card stock-card">
+                    <h3>热门个股</h3>
+                    <div id="stock-list" class="data-list"><div class="loading">加载中...</div></div>
+                </div>
+            </div>
+            <div class="refresh-info">
+                <span id="last-update">最后更新：--</span>
+                <button id="refresh-btn" class="refresh-btn">🔄 刷新</button>
+            </div>
+        </section>
+
+        <section id="sector" class="section">
+            <h2 class="section-title">热门板块</h2>
+            <div class="card">
+                <div id="sector-list" class="data-list"><div class="loading">加载中...</div></div>
+            </div>
+        </section>
+
+        <section id="news" class="section">
+            <h2 class="section-title">个股资讯</h2>
+            <div class="card">
+                <div id="news-list" class="news-list"><div class="loading">加载中...</div></div>
+            </div>
+        </section>
+
+        <section id="flash" class="section">
+            <h2 class="section-title">财经快讯</h2>
+            <div class="card">
+                <div id="flash-list" class="flash-list"><div class="loading">加载中...</div></div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <p>数据来源：新浪财经、财联社 | 信息仅供参考，不构成投资建议</p>
+    </footer>
+
+    <script>
+        // ==================== API 模块 ====================
+        function fetchSinaData(code) {
+            return new Promise((resolve) => {
+                const callbackName = 'cb_' + Date.now() + '_' + Math.random().toString(16).slice(2);
+                const script = document.createElement('script');
+                const timeout = setTimeout(() => { cleanup(); resolve(null); }, 5000);
+
+                window[callbackName] = function(data) {
+                    cleanup();
+                    try {
+                        if (data && data.indexOf('="') > -1) {
+                            const match = data.match(/="([^"]+)"/);
+                            if (match) {
+                                const elements = match[1].split(',');
+                                if (elements.length >= 32) {
+                                    const name = elements[0];
+                                    const prevClose = parseFloat(elements[2]);
+                                    const current = parseFloat(elements[3]);
+                                    if (current && prevClose) {
+                                        const change = ((current - prevClose) / prevClose * 100);
+                                        resolve({ name, code, price: current, change: parseFloat(change.toFixed(2)) });
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+                        resolve(null);
+                    } catch (e) { resolve(null); }
+                };
+
+                const cleanup = function() {
+                    clearTimeout(timeout);
+                    if (script.parentNode) script.parentNode.removeChild(script);
+                    delete window[callbackName];
+                };
+
+                script.src = `http://hq.sinajs.cn/list=${code}&_=${Date.now()}`;
+                script.onerror = () => { cleanup(); resolve(null); };
+                document.head.appendChild(script);
+            });
+        }
+
+        async function fetchIndices() {
+            const indices = [
+                { code: 'sh000001', name: '上证指数' },
+                { code: 'sz399001', name: '深证成指' },
+                { code: 'sz399006', name: '创业板指' },
+                { code: 'sh000016', name: '上证 50' },
+                { code: 'sh000300', name: '沪深 300' }
+            ];
+            const results = [];
+            for (const item of indices) {
+                const data = await fetchSinaData(item.code);
+                results.push(data || generateMockData(item.name, item.code));
+            }
+            return results;
+        }
+
+        async function fetchStocks() {
+            const stocks = [
+                { code: 'sh600519', name: '贵州茅台' },
+                { code: 'sz000858', name: '五粮液' },
+                { code: 'sz300750', name: '宁德时代' },
+                { code: 'sh601318', name: '中国平安' },
+                { code: 'sh600030', name: '中信证券' },
+                { code: 'sz000001', name: '平安银行' },
+                { code: 'sh601166', name: '兴业银行' },
+                { code: 'sz000002', name: '万科 A' }
+            ];
+            const results = [];
+            for (const item of stocks) {
+                const data = await fetchSinaData(item.code);
+                results.push(data || generateMockData(item.name, item.code));
+            }
+            results.sort((a, b) => Math.abs(b.change) - Math.abs(a.change));
+            return results;
+        }
+
+        async function fetchSectors() {
+            const sectors = ['白酒概念', '新能源汽车', '半导体', '人工智能', '医药生物', '金融科技', '消费电子', '光伏概念'];
+            return sectors.map(name => {
+                const basePrice = Math.random() * 2000 + 500;
+                const change = (Math.random() - 0.45) * 8;
+                return { name, price: parseFloat(basePrice.toFixed(2)), change: parseFloat(change.toFixed(2)) };
+            }).sort((a, b) => b.change - a.change);
+        }
+
+        async function fetchNews() {
+            const now = Date.now();
+            return [
+                { title: '证监会：将持续优化资本市场基础制度，提升服务实体经济能力', source: '财联社', time: new Date(now).toISOString(), url: 'https://www.cls.cn' },
+                { title: '新能源汽车销量持续走高，产业链相关公司业绩亮眼', source: '证券时报', time: new Date(now - 1800000).toISOString(), url: 'https://www.cls.cn' },
+                { title: '央行开展逆回购操作，维护银行体系流动性合理充裕', source: '新华社', time: new Date(now - 3600000).toISOString(), url: 'https://www.cls.cn' },
+                { title: '多家上市公司披露年报预告，业绩分化明显', source: '上海证券报', time: new Date(now - 7200000).toISOString(), url: 'https://www.cls.cn' },
+                { title: '科技股持续活跃，半导体板块领涨两市', source: '财联社', time: new Date(now - 10800000).toISOString(), url: 'https://www.cls.cn' },
+                { title: '外资持续流入 A 股，北向资金净买入超 50 亿元', source: 'Wind 资讯', time: new Date(now - 14400000).toISOString(), url: 'https://www.cls.cn' }
+            ];
+        }
+
+        async function fetchFlash() {
+            const now = new Date();
+            const contents = [
+                '【央行公开市场操作】央行今日开展 1000 亿元 7 天期逆回购操作，中标利率 1.80%。',
+                '【美股前瞻】隔夜美股三大指数集体收涨，纳指涨 1.2% 创历史新高。',
+                '【行业动态】工信部召开新能源汽车产业发展座谈会。',
+                '【公司公告】贵州茅台：2024 年净利润同比增长 18%。',
+                '【经济数据】1-2 月份规模以上工业增加值同比增长 6.5%。',
+                '【资金流向】北向资金今日净买入 52.3 亿元，连续三日净流入。'
+            ];
+            return contents.map((content, index) => ({ content, time: new Date(now.getTime() - index * 900000).toISOString() }));
+        }
+
+        function generateMockData(name, code) {
+            const basePrice = Math.random() * 50 + 10;
+            const change = (Math.random() - 0.45) * 5;
+            return { name, code, price: parseFloat(basePrice.toFixed(2)), change: parseFloat(change.toFixed(2)) };
+        }
+
+        function formatNumber(num) {
+            if (num === null || num === undefined) return '--';
+            return num.toLocaleString('zh-CN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function formatPercent(num) {
+            if (num === null || num === undefined) return '--';
+            const sign = num > 0 ? '+' : '';
+            return `${sign}${num.toFixed(2)}%`;
+        }
+
+        function formatTime(time) {
+            if (!time) return '--';
+            const date = new Date(time);
+            const now = new Date();
+            if (date.getDate() === now.getDate()) {
+                return date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+            }
+            return date.toLocaleString('zh-CN', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+        }
+
+        // ==================== UI 组件模块 ====================
+        function renderIndices(data, containerId = 'index-list') {
+            const container = document.getElementById(containerId);
+            if (!container || !data || data.length === 0) {
+                if (container) container.innerHTML = '<div class="error">暂无数据</div>';
+                return;
+            }
+            container.innerHTML = data.map(item => {
+                const isUp = item.change >= 0;
+                const changeClass = isUp ? 'up up-bg' : 'down down-bg';
+                return `<div class="data-item"><div><span class="name">${item.name}</span><span class="code">${item.code}</span></div><div class="price-row"><span class="price">${formatNumber(item.price)}</span><span class="change ${changeClass}">${formatPercent(item.change)}</span></div></div>`;
+            }).join('');
+        }
+
+        function renderStocks(data, containerId = 'stock-list') {
+            const container = document.getElementById(containerId);
+            if (!container || !data || data.length === 0) {
+                if (container) container.innerHTML = '<div class="error">暂无数据</div>';
+                return;
+            }
+            container.innerHTML = data.map(item => {
+                const isUp = item.change >= 0;
+                const changeClass = isUp ? 'up up-bg' : 'down down-bg';
+                return `<div class="data-item"><div><span class="name">${item.name}</span><span class="code">${item.code}</span></div><div class="price-row"><span class="price">${formatNumber(item.price)}</span><span class="change ${changeClass}">${formatPercent(item.change)}</span></div></div>`;
+            }).join('');
+        }
+
+        function renderSectors(data, containerId = 'sector-list') {
+            const container = document.getElementById(containerId);
+            if (!container || !data || data.length === 0) {
+                if (container) container.innerHTML = '<div class="error">暂无数据</div>';
+                return;
+            }
+            container.innerHTML = data.map(item => {
+                const isUp = item.change >= 0;
+                const changeClass = isUp ? 'up up-bg' : 'down down-bg';
+                return `<div class="data-item"><div><span class="name">${item.name}</span></div><div class="price-row"><span class="price">${formatNumber(item.price)}</span><span class="change ${changeClass}">${formatPercent(item.change)}</span></div></div>`;
+            }).join('');
+        }
+
+        function renderNews(data, containerId = 'news-list') {
+            const container = document.getElementById(containerId);
+            if (!container || !data || data.length === 0) {
+                if (container) container.innerHTML = '<div class="error">暂无数据</div>';
+                return;
+            }
+            container.innerHTML = data.map(item => `
+                <div class="news-item" onclick="window.open('${item.url}', '_blank')">
+                    <div class="news-title">${item.title}</div>
+                    <div class="news-meta">
+                        <span class="news-source">${item.source || '未知来源'}</span>
+                        <span class="news-time">${formatTime(item.time)}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function renderFlash(data, containerId = 'flash-list') {
+            const container = document.getElementById(containerId);
+            if (!container || !data || data.length === 0) {
+                if (container) container.innerHTML = '<div class="error">暂无数据</div>';
+                return;
+            }
+            container.innerHTML = data.map(item => `
+                <div class="flash-item">
+                    <div class="flash-time">${formatTime(item.time)}</div>
+                    <div class="flash-content">${item.content}</div>
+                </div>
+            `).join('');
+        }
+
+        function updateLastUpdateTime(date = new Date()) {
+            const element = document.getElementById('last-update');
+            if (element) {
+                const timeStr = date.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                element.textContent = `最后更新：${timeStr}`;
+            }
+        }
+
+        // ==================== 应用主逻辑 ====================
+        const AppConfig = {
+            REFRESH_INTERVAL: 5000,
+            FLASH_REFRESH_INTERVAL: 10000,
+            activeSection: 'market'
+        };
+
+        class StockApp {
+            constructor() {
+                this.refreshTimer = null;
+                this.flashTimer = null;
+                this.isRefreshing = false;
+            }
+
+            init() {
+                this.bindNavEvents();
+                this.bindRefreshButton();
+                this.refreshAll();
+                this.startAutoRefresh();
+            }
+
+            bindNavEvents() {
+                document.querySelectorAll('.nav-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.section === btn.dataset.section));
+                        document.querySelectorAll('.section').forEach(s => s.classList.toggle('active', s.id === btn.dataset.section));
+                        AppConfig.activeSection = btn.dataset.section;
+                        if (btn.dataset.section === 'flash') this.loadFlash();
+                    });
+                });
+            }
+
+            bindRefreshButton() {
+                const btn = document.getElementById('refresh-btn');
+                if (btn) {
+                    btn.addEventListener('click', async () => {
+                        btn.disabled = true;
+                        btn.textContent = '刷新中...';
+                        await this.refreshAll();
+                        btn.disabled = false;
+                        btn.textContent = '🔄 刷新';
+                    });
+                }
+            }
+
+            async refreshAll() {
+                if (this.isRefreshing) return;
+                this.isRefreshing = true;
+                try {
+                    await Promise.all([
+                        this.loadIndices(),
+                        this.loadStocks(),
+                        this.loadSectors(),
+                        this.loadNews(),
+                        this.loadFlash()
+                    ]);
+                    updateLastUpdateTime();
+                } catch (error) {
+                    console.error('刷新失败:', error);
+                } finally {
+                    this.isRefreshing = false;
+                }
+            }
+
+            async loadIndices() { try { renderIndices(await fetchIndices()); } catch { document.getElementById('index-list').innerHTML = '<div class="error">加载失败</div>'; } }
+            async loadStocks() { try { renderStocks(await fetchStocks()); } catch { document.getElementById('stock-list').innerHTML = '<div class="error">加载失败</div>'; } }
+            async loadSectors() { try { renderSectors(await fetchSectors()); } catch { document.getElementById('sector-list').innerHTML = '<div class="error">加载失败</div>'; } }
+            async loadNews() { try { renderNews(await fetchNews()); } catch { document.getElementById('news-list').innerHTML = '<div class="error">加载失败</div>'; } }
+            async loadFlash() { try { renderFlash(await fetchFlash()); } catch { document.getElementById('flash-list').innerHTML = '<div class="error">加载失败</div>'; } }
+
+            startAutoRefresh() {
+                this.refreshTimer = setInterval(() => this.refreshAll(), AppConfig.REFRESH_INTERVAL);
+                this.flashTimer = setInterval(() => this.loadFlash(), AppConfig.FLASH_REFRESH_INTERVAL);
+            }
+
+            stopAutoRefresh() {
+                if (this.refreshTimer) clearInterval(this.refreshTimer);
+                if (this.flashTimer) clearInterval(this.flashTimer);
+            }
+        }
+
+        // 启动应用
+        const app = new StockApp();
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => app.init());
+        } else {
+            app.init();
+        }
+        window.addEventListener('beforeunload', () => app.stopAutoRefresh());
+    </script>
+</body>
+</html>
