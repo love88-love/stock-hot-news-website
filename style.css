@@ -1,0 +1,463 @@
+/* ===================================
+   股票热点资讯 - 深色主题样式
+   =================================== */
+
+/* CSS 变量定义 - 方便主题切换 */
+:root {
+    --bg-primary: #1a1a2e;
+    --bg-secondary: #16213e;
+    --bg-card: #0f3460;
+    --text-primary: #ffffff;
+    --text-secondary: #b8b8b8;
+    --accent-color: #e94560;
+    --success-color: #00c853;
+    --danger-color: #ff5252;
+    --border-color: #2a2a4e;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* 全局重置 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+    min-height: 100vh;
+}
+
+/* 容器 - 居中布局 */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* ===================================
+   头部导航
+   =================================== */
+.header {
+    background: var(--bg-secondary);
+    padding: 15px 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: var(--shadow);
+}
+
+.header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.logo {
+    font-size: 1.5rem;
+    color: var(--accent-color);
+}
+
+.nav {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.nav-btn {
+    background: transparent;
+    border: 2px solid var(--border-color);
+    color: var(--text-secondary);
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.nav-btn:hover {
+    border-color: var(--accent-color);
+    color: var(--text-primary);
+}
+
+.nav-btn.active {
+    background: var(--accent-color);
+    border-color: var(--accent-color);
+    color: var(--text-primary);
+}
+
+/* ===================================
+   主内容区
+   =================================== */
+main {
+    padding: 30px 20px;
+}
+
+.section {
+    display: none;
+}
+
+.section.active {
+    display: block;
+}
+
+.section-title {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    color: var(--text-primary);
+    border-left: 4px solid var(--accent-color);
+    padding-left: 15px;
+}
+
+/* ===================================
+   卡片样式
+   =================================== */
+.card {
+    background: var(--bg-card);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+}
+
+.card h3 {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    color: var(--accent-color);
+}
+
+/* ===================================
+   行情网格布局
+   =================================== */
+.market-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+/* ===================================
+   数据列表
+   =================================== */
+.data-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.data-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    transition: transform 0.2s ease;
+}
+
+.data-item:hover {
+    transform: translateX(5px);
+}
+
+.data-item .name {
+    font-weight: 500;
+}
+
+.data-item .code {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-left: 8px;
+}
+
+.data-item .price {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.data-item .change {
+    font-size: 0.9rem;
+    padding: 3px 8px;
+    border-radius: 4px;
+    margin-left: 10px;
+}
+
+/* 涨跌颜色 */
+.up {
+    color: var(--success-color);
+}
+
+.down {
+    color: var(--danger-color);
+}
+
+.up-bg {
+    background: rgba(0, 200, 83, 0.2);
+}
+
+.down-bg {
+    background: rgba(255, 82, 82, 0.2);
+}
+
+/* ===================================
+   新闻列表
+   =================================== */
+.news-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.news-item {
+    padding: 15px;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    border-left: 3px solid var(--accent-color);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.news-item:hover {
+    background: var(--bg-secondary);
+    border-left-color: var(--success-color);
+}
+
+.news-item .news-title {
+    font-size: 1rem;
+    margin-bottom: 8px;
+    line-height: 1.4;
+}
+
+.news-item .news-meta {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.news-item .news-time {
+    color: var(--accent-color);
+}
+
+/* ===================================
+   快讯列表
+   =================================== */
+.flash-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+.flash-item {
+    display: flex;
+    gap: 15px;
+    padding: 12px;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+}
+
+.flash-item .flash-time {
+    min-width: 80px;
+    font-size: 0.85rem;
+    color: var(--accent-color);
+    font-weight: 500;
+}
+
+.flash-item .flash-content {
+    flex: 1;
+    line-height: 1.5;
+}
+
+/* 滚动条样式 */
+.flash-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.flash-list::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+    border-radius: 4px;
+}
+
+.flash-list::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+
+.flash-list::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-color);
+}
+
+/* ===================================
+   刷新按钮
+   =================================== */
+.refresh-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background: var(--bg-card);
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+.refresh-info #last-update {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.refresh-btn {
+    background: var(--accent-color);
+    border: none;
+    color: var(--text-primary);
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.refresh-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(233, 69, 96, 0.4);
+}
+
+/* ===================================
+   加载状态
+   =================================== */
+.loading {
+    text-align: center;
+    padding: 30px;
+    color: var(--text-secondary);
+}
+
+.error {
+    text-align: center;
+    padding: 30px;
+    color: var(--danger-color);
+    background: rgba(255, 82, 82, 0.1);
+    border-radius: 8px;
+}
+
+/* ===================================
+   页脚
+   =================================== */
+.footer {
+    background: var(--bg-secondary);
+    padding: 20px;
+    text-align: center;
+    margin-top: 40px;
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+/* ===================================
+   响应式设计 - 平板
+   =================================== */
+@media (max-width: 768px) {
+    .header .container {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .nav {
+        justify-content: center;
+    }
+
+    .nav-btn {
+        padding: 6px 12px;
+        font-size: 0.85rem;
+    }
+
+    .market-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .section-title {
+        font-size: 1.3rem;
+    }
+
+    main {
+        padding: 20px 15px;
+    }
+}
+
+/* ===================================
+   响应式设计 - 手机
+   =================================== */
+@media (max-width: 480px) {
+    .logo {
+        font-size: 1.2rem;
+    }
+
+    .nav-btn {
+        padding: 5px 10px;
+        font-size: 0.8rem;
+    }
+
+    .data-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .data-item .price-row {
+        display: flex;
+        align-items: center;
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .refresh-info {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+
+    .flash-item {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .flash-item .flash-time {
+        min-width: auto;
+    }
+}
+
+/* ===================================
+   动画效果
+   =================================== */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.section.active {
+    animation: fadeIn 0.3s ease;
+}
+
+.data-item, .news-item, .flash-item {
+    animation: fadeIn 0.3s ease;
+}
+
+/* 价格闪烁动画 */
+@keyframes priceFlash {
+    0% { background-color: var(--bg-secondary); }
+    50% { background-color: rgba(233, 69, 96, 0.3); }
+    100% { background-color: var(--bg-secondary); }
+}
+
+.price-update {
+    animation: priceFlash 0.5s ease;
+}

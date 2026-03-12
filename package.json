@@ -1,0 +1,21 @@
+{
+  "name": "stock-news",
+  "version": "1.0.0",
+  "description": "股票热点资讯网站 - 实时行情、热门板块、个股资讯、财经快讯",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "dev": "node server/server.js"
+  },
+  "keywords": [
+    "stock",
+    "finance",
+    "news",
+    "realtime"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

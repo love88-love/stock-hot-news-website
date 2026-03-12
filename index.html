@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>股票热点资讯</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- 顶部导航栏 -->
+    <header class="header">
+        <div class="container">
+            <h1 class="logo">📈 股票热点资讯</h1>
+            <nav class="nav">
+                <button class="nav-btn active" data-section="market">实时行情</button>
+                <button class="nav-btn" data-section="sector">热门板块</button>
+                <button class="nav-btn" data-section="news">个股资讯</button>
+                <button class="nav-btn" data-section="flash">财经快讯</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 主内容区 -->
+    <main class="container">
+        <!-- 实时行情板块 -->
+        <section id="market" class="section active">
+            <h2 class="section-title">实时行情</h2>
+            <div class="market-grid">
+                <!-- 主要指数 -->
+                <div class="card index-card">
+                    <h3>主要指数</h3>
+                    <div id="index-list" class="data-list">
+                        <div class="loading">加载中...</div>
+                    </div>
+                </div>
+                <!-- 热门个股 -->
+                <div class="card stock-card">
+                    <h3>热门个股</h3>
+                    <div id="stock-list" class="data-list">
+                        <div class="loading">加载中...</div>
+                    </div>
+                </div>
+            </div>
+            <div class="refresh-info">
+                <span id="last-update">最后更新：--</span>
+                <button id="refresh-btn" class="refresh-btn">🔄 刷新</button>
+            </div>
+        </section>
+
+        <!-- 热门板块板块 -->
+        <section id="sector" class="section">
+            <h2 class="section-title">热门板块</h2>
+            <div class="card">
+                <div id="sector-list" class="data-list">
+                    <div class="loading">加载中...</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 个股资讯板块 -->
+        <section id="news" class="section">
+            <h2 class="section-title">个股资讯</h2>
+            <div class="card">
+                <div id="news-list" class="news-list">
+                    <div class="loading">加载中...</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 财经快讯板块 -->
+        <section id="flash" class="section">
+            <h2 class="section-title">财经快讯</h2>
+            <div class="card">
+                <div id="flash-list" class="flash-list">
+                    <div class="loading">加载中...</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <p>数据来源：新浪财经、财联社 | 信息仅供参考，不构成投资建议</p>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="js/api.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
